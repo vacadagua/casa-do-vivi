@@ -17,559 +17,296 @@
     --accent-green: #5ecb8a;
     --accent-red: #f07070;
     --accent-gold: #f0c060;
-    --accent-purple: #a78bfa;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; font-size: 14px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    font-size: 14px;
+  /* LOADING */
+  #loading {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh; gap: 20px;
   }
+  .spinner {
+    width: 36px; height: 36px; border: 2px solid var(--border);
+    border-top-color: var(--accent-blue); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
+
+  /* ERROR */
+  #error { display: none; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
+  .error-box { background: var(--bg2); border: 1px solid #3a1a1a; border-radius: 10px; padding: 32px 40px; text-align: center; max-width: 400px; }
+  .error-box h3 { color: var(--accent-red); margin-bottom: 10px; }
+  .error-box p { color: var(--muted); font-size: 13px; line-height: 1.6; }
 
   /* HEADER */
+  #app { display: none; }
   .header {
     background: linear-gradient(160deg, #0e0e1a 0%, #131325 60%, #0c1020 100%);
-    padding: 52px 48px 44px;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
+    padding: 52px 48px 44px; border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
   }
   .header::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
+    content: ''; position: absolute; top: -80px; right: -80px;
     width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(126,184,247,0.07) 0%, transparent 65%);
-    pointer-events: none;
   }
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: 30%;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(94,203,138,0.04) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .header-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-weight: 400;
-    color: #dce8ff;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-  .header-sub {
-    margin-top: 10px;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 300;
-  }
+  .header-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 400; color: #dce8ff; letter-spacing: -0.5px; line-height: 1.1; }
+  .header-sub { margin-top: 10px; color: var(--muted); font-size: 13px; font-weight: 300; }
+  .header-updated { position: absolute; top: 24px; right: 48px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
 
   /* CARDS */
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-  }
-  .card {
-    padding: 28px 28px;
-    border-right: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-    transition: background 0.2s;
-  }
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--bg2); border-bottom: 1px solid var(--border); }
+  .card { padding: 28px; border-right: 1px solid var(--border); transition: background 0.2s; }
   .card:last-child { border-right: none; }
   .card:hover { background: var(--bg3); }
-  .card-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
-  .card-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 24px;
-    font-weight: 500;
-    letter-spacing: -0.5px;
-    line-height: 1;
-  }
-  .card-sub {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 6px;
-    font-weight: 300;
-  }
+  .card-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; }
+  .card-value { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; letter-spacing: -0.5px; line-height: 1; }
+  .card-sub { font-size: 11px; color: var(--muted); margin-top: 6px; font-weight: 300; }
 
   /* PROGRESS */
-  .progress-bar {
-    background: var(--bg2);
-    padding: 20px 48px;
-    border-bottom: 1px solid var(--border);
-  }
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-  }
-  .progress-track {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
-    border-radius: 2px;
-    transition: width 1s ease;
-  }
+  .progress-bar { background: var(--bg2); padding: 20px 48px; border-bottom: 1px solid var(--border); }
+  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 10px; font-family: 'DM Mono', monospace; font-size: 11px; }
+  .progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); border-radius: 2px; transition: width 1s ease; }
 
   /* TABS */
-  .tabs {
-    background: var(--bg);
-    padding: 0 48px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    gap: 0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .tab {
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--muted);
-    padding: 16px 22px;
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: color 0.2s, border-color 0.2s;
-  }
+  .tabs { background: var(--bg); padding: 0 48px; border-bottom: 1px solid var(--border); display: flex; position: sticky; top: 0; z-index: 10; }
+  .tab { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 16px 22px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; letter-spacing: 0.3px; transition: color 0.2s, border-color 0.2s; }
   .tab:hover { color: var(--text); }
-  .tab.active {
-    color: var(--accent-blue);
-    border-bottom-color: var(--accent-blue);
-  }
+  .tab.active { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
 
   /* CONTENT */
   .content { padding: 36px 48px; }
 
-  /* VISAO GERAL */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  .panel {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px;
-  }
-  .panel-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-  .entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #16161f;
-  }
+  /* OVERVIEW */
+  .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+  .panel-title { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 20px; }
+  .entry { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #16161f; }
   .entry:last-child { border-bottom: none; }
-  .entry-name {
-    font-size: 13px;
-    color: var(--text);
-  }
-  .entry-sub {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .entry-name { font-size: 13px; color: var(--text); }
+  .entry-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
   .entry-right { text-align: right; }
-  .entry-pgto {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-  }
-  .entry-saldo {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .entry-pgto { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .entry-saldo { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .next-tag { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1.5px; color: var(--accent-gold); border: 1px solid rgba(240,192,96,0.3); padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
 
   /* MARCOS */
-  .milestones {
-    grid-column: 1 / -1;
-  }
-  .milestone-track {
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-    margin-top: 8px;
-  }
-  .milestone-track::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    height: 1px;
-    background: var(--border);
-  }
-  .milestone {
-    flex: 1;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-  .milestone-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-  }
-  .milestone-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .milestone-valor {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text);
-  }
-  .milestone-data {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
+  .milestones { grid-column: 1 / -1; }
+  .milestone-track { display: flex; align-items: flex-start; position: relative; margin-top: 8px; }
+  .milestone-track::before { content: ''; position: absolute; top: 10px; left: 10px; right: 10px; height: 1px; background: var(--border); }
+  .milestone { flex: 1; text-align: center; position: relative; z-index: 1; }
+  .milestone-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+  .milestone-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .milestone-valor { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); }
+  .milestone-data { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
   /* TABLE */
-  .search-bar {
-    margin-bottom: 16px;
-  }
-  .search-input {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-    width: 260px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .search-bar { margin-bottom: 16px; }
+  .search-input { background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 6px; font-size: 13px; font-family: 'DM Mono', monospace; width: 280px; outline: none; transition: border-color 0.2s; }
   .search-input:focus { border-color: var(--accent-blue); }
   .search-input::placeholder { color: var(--muted); }
-
-  .table-wrap {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
+  .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
   table { width: 100%; border-collapse: collapse; }
   thead tr { background: var(--bg); }
-  th {
-    padding: 13px 18px;
-    text-align: left;
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--border);
-    font-weight: 400;
-  }
-  td {
-    padding: 11px 18px;
-    border-bottom: 1px solid #14141c;
-  }
+  th { padding: 13px 18px; text-align: left; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 400; }
+  td { padding: 11px 18px; border-bottom: 1px solid #14141c; }
   tr:last-child td { border-bottom: none; }
   tr:nth-child(even) td { background: rgba(255,255,255,0.01); }
   tr:hover td { background: var(--bg3); }
-
-  .td-num {
-    font-family: 'DM Mono', monospace;
-    color: #2e2e3e;
-    font-size: 11px;
-  }
-  .td-name {
-    font-size: 13px;
-    color: var(--text);
-  }
-  .td-mono {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-  }
-  .badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    padding: 3px 9px;
-    border-radius: 20px;
-    text-transform: uppercase;
-  }
-  .badge-pago {
-    background: rgba(94,203,138,0.1);
-    color: var(--accent-green);
-    border: 1px solid rgba(94,203,138,0.25);
-  }
-  .badge-pendente {
-    background: rgba(240,192,96,0.08);
-    color: var(--accent-gold);
-    border: 1px solid rgba(240,192,96,0.2);
-  }
-
-  .panel-next {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .next-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1.5px;
-    color: var(--accent-gold);
-    border: 1px solid rgba(240,192,96,0.3);
-    padding: 2px 6px;
-    border-radius: 3px;
-  }
+  .td-num { font-family: 'DM Mono', monospace; color: #2e2e3e; font-size: 11px; }
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .badge { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; }
+  .badge-pago { background: rgba(94,203,138,0.1); color: var(--accent-green); border: 1px solid rgba(94,203,138,0.25); }
+  .badge-pendente { background: rgba(240,192,96,0.08); color: var(--accent-gold); border: 1px solid rgba(240,192,96,0.2); }
 
   .hidden { display: none; }
 
   @media (max-width: 900px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
     .overview-grid { grid-template-columns: 1fr; }
-    .header { padding: 36px 24px; }
-    .progress-bar, .tabs, .content { padding-left: 24px; padding-right: 24px; }
     .milestones { grid-column: 1; }
-  }
-  @media (max-width: 600px) {
-    .cards { grid-template-columns: 1fr 1fr; }
+    .header, .progress-bar, .content { padding-left: 20px; padding-right: 20px; }
+    .tabs { padding-left: 20px; }
     .header h1 { font-size: 26px; }
-    .card-value { font-size: 18px; }
+    .header-updated { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-eyebrow">Finanças · Casa do Vivi</div>
-  <h1>Acompanhamento<br>de Pagamentos</h1>
-  <div class="header-sub">Financiamento Ana &nbsp;·&nbsp; Janeiro 2025 → Maio 2035 &nbsp;·&nbsp; 125 parcelas</div>
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Carregando dados do Notion...</div>
 </div>
 
-<div class="cards">
-  <div class="card">
-    <div class="card-label">Saldo Devedor</div>
-    <div class="card-value" id="saldo-devedor" style="color:#f07070"></div>
-    <div class="card-sub" id="saldo-sub"></div>
-  </div>
-  <div class="card">
-    <div class="card-label">Total Pago</div>
-    <div class="card-value" id="total-pago" style="color:#5ecb8a"></div>
-    <div class="card-sub" id="pago-sub"></div>
-  </div>
-  <div class="card">
-    <div class="card-label">Parcelas Restantes</div>
-    <div class="card-value" id="restantes" style="color:#7eb8f7"></div>
-    <div class="card-sub">de 125 total</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Próximo Vencimento</div>
-    <div class="card-value" id="proximo" style="color:#f0c060;font-size:18px"></div>
-    <div class="card-sub" id="proximo-sub"></div>
+<!-- ERROR -->
+<div id="error" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh">
+  <div class="error-box">
+    <h3>Erro ao carregar dados</h3>
+    <p id="error-msg">Não foi possível conectar ao Notion. Verifique a integração.</p>
   </div>
 </div>
 
-<div class="progress-bar">
-  <div class="progress-meta">
-    <span style="color:var(--accent-green)" id="meta-pagas"></span>
-    <span style="color:var(--muted);font-family:'DM Mono',monospace" id="meta-pct"></span>
-    <span style="color:var(--accent-blue)" id="meta-rest"></span>
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-eyebrow">Finanças · Casa do Vivi</div>
+    <h1>Acompanhamento<br>de Pagamentos</h1>
+    <div class="header-sub">Financiamento Ana &nbsp;·&nbsp; Janeiro 2025 → Maio 2035 &nbsp;·&nbsp; 125 parcelas</div>
+    <div class="header-updated" id="last-updated"></div>
   </div>
-  <div class="progress-track">
-    <div class="progress-fill" id="progress-fill"></div>
-  </div>
-</div>
 
-<div class="tabs">
-  <button class="tab active" onclick="setTab('visao')">Visão Geral</button>
-  <button class="tab" onclick="setTab('pagas')" id="tab-pagas">Pagas</button>
-  <button class="tab" onclick="setTab('pendentes')" id="tab-pendentes">Pendentes</button>
-  <button class="tab" onclick="setTab('todas')">Todas</button>
-</div>
-
-<div class="content">
-
-  <!-- VISAO GERAL -->
-  <div id="view-visao">
-    <div class="overview-grid">
-      <div class="panel">
-        <div class="panel-title">Últimas Pagas</div>
-        <div id="ultimas-pagas"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">Próximas a Pagar</div>
-        <div id="proximas-pagar"></div>
-      </div>
-      <div class="panel milestones">
-        <div class="panel-title">Marcos da Dívida</div>
-        <div class="milestone-track" id="marcos"></div>
-      </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Saldo Devedor</div>
+      <div class="card-value" id="saldo-devedor" style="color:var(--accent-red)"></div>
+      <div class="card-sub" id="saldo-sub"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total Pago</div>
+      <div class="card-value" id="total-pago" style="color:var(--accent-green)"></div>
+      <div class="card-sub" id="pago-sub"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Parcelas Restantes</div>
+      <div class="card-value" id="restantes" style="color:var(--accent-blue)"></div>
+      <div class="card-sub">de 125 total</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Próximo Vencimento</div>
+      <div class="card-value" id="proximo" style="color:var(--accent-gold);font-size:18px"></div>
+      <div class="card-sub" id="proximo-sub"></div>
     </div>
   </div>
 
-  <!-- TABELAS -->
-  <div id="view-pagas" class="hidden">
-    <div class="table-wrap"><table id="table-pagas"></table></div>
-  </div>
-  <div id="view-pendentes" class="hidden">
-    <div class="table-wrap"><table id="table-pendentes"></table></div>
-  </div>
-  <div id="view-todas" class="hidden">
-    <div class="search-bar">
-      <input class="search-input" id="busca" placeholder="Buscar por mês (ex: Março 2027)" oninput="filtrarTabela()">
+  <div class="progress-bar">
+    <div class="progress-meta">
+      <span style="color:var(--accent-green)" id="meta-pagas"></span>
+      <span style="color:var(--muted);font-family:'DM Mono',monospace" id="meta-pct"></span>
+      <span style="color:var(--accent-blue)" id="meta-rest"></span>
     </div>
-    <div class="table-wrap"><table id="table-todas"></table></div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
   </div>
 
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('visao')">Visão Geral</button>
+    <button class="tab" id="tab-pagas" onclick="setTab('pagas')">Pagas</button>
+    <button class="tab" id="tab-pendentes" onclick="setTab('pendentes')">Pendentes</button>
+    <button class="tab" onclick="setTab('todas')">Todas (125)</button>
+  </div>
+
+  <div class="content">
+    <div id="view-visao">
+      <div class="overview-grid">
+        <div class="panel">
+          <div class="panel-title">Últimas Pagas</div>
+          <div id="ultimas-pagas"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Próximas a Pagar</div>
+          <div id="proximas-pagar"></div>
+        </div>
+        <div class="panel milestones">
+          <div class="panel-title">Marcos da Dívida</div>
+          <div class="milestone-track" id="marcos"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-pagas" class="hidden">
+      <div class="table-wrap"><table id="table-pagas"></table></div>
+    </div>
+    <div id="view-pendentes" class="hidden">
+      <div class="table-wrap"><table id="table-pendentes"></table></div>
+    </div>
+    <div id="view-todas" class="hidden">
+      <div class="search-bar">
+        <input class="search-input" id="busca" placeholder="Buscar mês (ex: Março 2027)" oninput="filtrar()">
+      </div>
+      <div class="table-wrap"><table id="table-todas"></table></div>
+    </div>
+  </div>
 </div>
 
 <script>
-// ─── DADOS ───────────────────────────────────────────────────────────────────
-const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const TOTAL_DIVIDA = 50000;
-const PARCELA = 400;
-const PAGAS_COUNT = 14; // Jan/25 a Fev/26
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const TOKEN   = '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';
+const DB_ID   = '2c9057e4-f363-4570-b6a7-a75444e17ab7';
+const PROXY   = 'https://api.allorigins.win/raw?url=';
+const API     = 'https://api.notion.com/v1';
 
-function gerarParcelas() {
-  const list = [];
-  let saldo = TOTAL_DIVIDA;
-  let ano = 2025, mes = 0; // 0=Janeiro
-  for (let i = 0; i < 125; i++) {
-    list.push({
-      num: i + 1,
-      nome: MESES[mes] + ' ' + ano,
-      mes, ano,
-      valorTotal: saldo,
-      pgto: PARCELA,
-      saldoMes: saldo - PARCELA,
-      pago: i < PAGAS_COUNT
-    });
-    saldo -= PARCELA;
-    mes++;
-    if (mes === 12) { mes = 0; ano++; }
-  }
-  return list;
+// Ordem dos meses para ordenar
+const MESES_ORD = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function mesIndex(nome) {
+  const [mes, ano] = nome.split(' ');
+  return parseInt(ano) * 12 + MESES_ORD.indexOf(mes);
 }
 
-const PARCELAS = gerarParcelas();
-const PAGAS = PARCELAS.filter(p => p.pago);
-const PENDENTES = PARCELAS.filter(p => !p.pago);
+// ─── FETCH NOTION ─────────────────────────────────────────────────────────────
+async function notionQuery(cursor) {
+  const body = { page_size: 100 };
+  if (cursor) body.start_cursor = cursor;
 
-// ─── FORMATAÇÃO ──────────────────────────────────────────────────────────────
-function brl(v) {
-  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const url = `${API}/databases/${DB_ID}/query`;
+  const encoded = encodeURIComponent(url);
+
+  const res = await fetch(PROXY + encoded, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-requested-with': 'XMLHttpRequest',
+    },
+    body: JSON.stringify({
+      url,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    }),
+  });
+
+  // allorigins retorna o conteúdo direto — tentar parse direto
+  const text = await res.text();
+  try { return JSON.parse(text); } catch { throw new Error('Resposta inválida do proxy'); }
 }
 
-// ─── PREENCHER CARDS ─────────────────────────────────────────────────────────
-const ultimaPaga = PAGAS[PAGAS.length - 1];
-const proxima = PENDENTES[0];
-const pct = (PAGAS.length / 125 * 100).toFixed(1);
-
-document.getElementById('saldo-devedor').textContent = brl(ultimaPaga.saldoMes);
-document.getElementById('saldo-sub').textContent = 'de ' + brl(TOTAL_DIVIDA);
-document.getElementById('total-pago').textContent = brl(PAGAS.length * PARCELA);
-document.getElementById('pago-sub').textContent = PAGAS.length + ' parcelas pagas';
-document.getElementById('restantes').textContent = PENDENTES.length;
-document.getElementById('proximo').textContent = proxima.nome;
-document.getElementById('proximo-sub').textContent = 'Parcela nº ' + proxima.num;
-
-document.getElementById('meta-pagas').textContent = '✓ ' + PAGAS.length + ' pagas';
-document.getElementById('meta-pct').textContent = pct + '% concluído';
-document.getElementById('meta-rest').textContent = PENDENTES.length + ' restantes →';
-document.getElementById('progress-fill').style.width = pct + '%';
-
-// ─── VISÃO GERAL ─────────────────────────────────────────────────────────────
-function entryHTML(p, isNext) {
-  const cor = p.pago ? 'var(--accent-green)' : 'var(--muted)';
-  return `<div class="entry">
-    <div>
-      ${isNext ? '<div class="panel-next"><span class="next-tag">PRÓX</span><span class="entry-name" style="color:var(--accent-gold)">' + p.nome + '</span></div>' : '<div class="entry-name">' + p.nome + '</div>'}
-      <div class="entry-sub">Parcela nº ${p.num}</div>
-    </div>
-    <div class="entry-right">
-      <div class="entry-pgto" style="color:${cor}">- ${brl(p.pgto)}</div>
-      <div class="entry-saldo">saldo ${brl(p.saldoMes)}</div>
-    </div>
-  </div>`;
+async function carregarTodas() {
+  let all = [], cursor = null;
+  do {
+    const data = await notionQuery(cursor);
+    if (data.results) all = all.concat(data.results);
+    cursor = data.has_more ? data.next_cursor : null;
+  } while (cursor);
+  return all;
 }
 
-document.getElementById('ultimas-pagas').innerHTML =
-  PAGAS.slice(-5).reverse().map(p => entryHTML(p, false)).join('');
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const brl = v => (v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-document.getElementById('proximas-pagar').innerHTML =
-  PENDENTES.slice(0, 6).map((p, i) => entryHTML(p, i === 0)).join('');
+function extrairDados(page) {
+  const p = page.properties;
+  return {
+    id: page.id,
+    nome: p['Comprovantes']?.title?.[0]?.plain_text || '',
+    status: p['Status do Pagamento']?.select?.name || 'Pendente',
+    valorTotal: p['ValorTotal']?.number || 0,
+    pgto: p['Pgto']?.number || 0,
+    saldoMes: (p['ValorTotal']?.number || 0) - (p['Pgto']?.number || 0),
+  };
+}
 
-// Marcos
-const marcosData = [
-  { label: 'Início', valor: brl(50000), data: 'Jan/2025', pct: 0, cor: 'var(--muted)' },
-  { label: '25% pago', valor: brl(37500), data: 'Mar/2028', pct: 25, cor: 'var(--accent-blue)' },
-  { label: '50% pago', valor: brl(25000), data: 'Jun/2031', pct: 50, cor: 'var(--accent-blue)' },
-  { label: '75% pago', valor: brl(12500), data: 'Ago/2034', pct: 75, cor: 'var(--accent-blue)' },
-  { label: 'Quitação', valor: brl(0), data: 'Mai/2035', pct: 100, cor: 'var(--accent-green)' },
-];
-const progNum = parseFloat(pct);
-document.getElementById('marcos').innerHTML = marcosData.map(m => {
-  const ativo = progNum >= m.pct;
-  const bg = ativo ? m.cor : 'transparent';
-  return `<div class="milestone">
-    <div class="milestone-dot" style="border-color:${m.cor};background:${bg}">
-      ${ativo ? '✓' : ''}
-    </div>
-    <div class="milestone-label" style="color:${m.cor}">${m.label}</div>
-    <div class="milestone-valor">${m.valor}</div>
-    <div class="milestone-data">${m.data}</div>
-  </div>`;
-}).join('');
-
-// ─── TABELAS ─────────────────────────────────────────────────────────────────
+// ─── RENDER ──────────────────────────────────────────────────────────────────
 function tableHead() {
   return `<thead><tr>
     <th>#</th><th>Mês / Ano</th><th>Saldo Anterior</th>
@@ -577,13 +314,13 @@ function tableHead() {
   </tr></thead>`;
 }
 
-function tableRow(p) {
-  const badge = p.pago
+function tableRow(p, i) {
+  const badge = p.status === 'Pago'
     ? `<span class="badge badge-pago">Pago</span>`
     : `<span class="badge badge-pendente">Pendente</span>`;
   return `<tr>
-    <td class="td-num">${p.num}</td>
-    <td class="td-name">${p.nome}</td>
+    <td class="td-num">${i + 1}</td>
+    <td style="font-size:13px">${p.nome}</td>
     <td class="td-mono" style="color:var(--muted)">${brl(p.valorTotal)}</td>
     <td class="td-mono" style="color:var(--accent-red)">- ${brl(p.pgto)}</td>
     <td class="td-mono">${brl(p.saldoMes)}</td>
@@ -591,35 +328,136 @@ function tableRow(p) {
   </tr>`;
 }
 
-document.getElementById('table-pagas').innerHTML =
-  tableHead() + '<tbody>' + PAGAS.map(tableRow).join('') + '</tbody>';
+let TODAS_PARCELAS = [];
 
-document.getElementById('table-pendentes').innerHTML =
-  tableHead() + '<tbody>' + PENDENTES.map(tableRow).join('') + '</tbody>';
+function render(parcelas) {
+  TODAS_PARCELAS = parcelas;
 
-document.getElementById('table-todas').innerHTML =
-  tableHead() + '<tbody id="tbody-todas">' + PARCELAS.map(tableRow).join('') + '</tbody>';
+  const pagas     = parcelas.filter(p => p.status === 'Pago');
+  const pendentes = parcelas.filter(p => p.status !== 'Pago');
+  const ultimaPaga = pagas[pagas.length - 1];
+  const proxima    = pendentes[0];
+  const pct        = (pagas.length / 125 * 100).toFixed(1);
+  const saldo      = ultimaPaga ? ultimaPaga.saldoMes : 50000;
 
-// ─── BUSCA ────────────────────────────────────────────────────────────────────
-function filtrarTabela() {
+  // Cards
+  document.getElementById('saldo-devedor').textContent = brl(saldo);
+  document.getElementById('saldo-sub').textContent = 'de R$ 50.000,00';
+  document.getElementById('total-pago').textContent = brl(pagas.length * 400);
+  document.getElementById('pago-sub').textContent = pagas.length + ' parcelas pagas';
+  document.getElementById('restantes').textContent = pendentes.length;
+  document.getElementById('proximo').textContent = proxima ? proxima.nome : '—';
+  document.getElementById('proximo-sub').textContent = proxima ? 'Parcela nº ' + (pagas.length + 1) : '';
+
+  // Progress
+  document.getElementById('meta-pagas').textContent = '✓ ' + pagas.length + ' pagas';
+  document.getElementById('meta-pct').textContent = pct + '% concluído';
+  document.getElementById('meta-rest').textContent = pendentes.length + ' restantes →';
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  // Tab labels
+  document.getElementById('tab-pagas').textContent = `Pagas (${pagas.length})`;
+  document.getElementById('tab-pendentes').textContent = `Pendentes (${pendentes.length})`;
+
+  // Últimas pagas
+  document.getElementById('ultimas-pagas').innerHTML = pagas.slice(-5).reverse().map(p => `
+    <div class="entry">
+      <div><div class="entry-name">${p.nome}</div></div>
+      <div class="entry-right">
+        <div class="entry-pgto" style="color:var(--accent-green)">- ${brl(p.pgto)}</div>
+        <div class="entry-saldo">saldo ${brl(p.saldoMes)}</div>
+      </div>
+    </div>`).join('');
+
+  // Próximas pendentes
+  document.getElementById('proximas-pagar').innerHTML = pendentes.slice(0, 6).map((p, i) => `
+    <div class="entry">
+      <div style="display:flex;align-items:center">
+        ${i === 0 ? '<span class="next-tag">PRÓX</span>' : ''}
+        <div>
+          <div class="entry-name" style="color:${i === 0 ? 'var(--accent-gold)' : 'var(--text)'}">${p.nome}</div>
+        </div>
+      </div>
+      <div class="entry-right">
+        <div class="entry-pgto" style="color:var(--muted)">- ${brl(p.pgto)}</div>
+        <div class="entry-saldo">saldo ${brl(p.saldoMes)}</div>
+      </div>
+    </div>`).join('');
+
+  // Marcos
+  const progNum = parseFloat(pct);
+  const marcos = [
+    { label: 'Início',   valor: brl(50000), data: 'Jan/2025', pct: 0,   cor: 'var(--muted)' },
+    { label: '25% pago', valor: brl(37500), data: 'Mar/2028', pct: 25,  cor: 'var(--accent-blue)' },
+    { label: '50% pago', valor: brl(25000), data: 'Jun/2031', pct: 50,  cor: 'var(--accent-blue)' },
+    { label: '75% pago', valor: brl(12500), data: 'Ago/2034', pct: 75,  cor: 'var(--accent-blue)' },
+    { label: 'Quitação', valor: brl(0),     data: 'Mai/2035', pct: 100, cor: 'var(--accent-green)' },
+  ];
+  document.getElementById('marcos').innerHTML = marcos.map(m => {
+    const ativo = progNum >= m.pct;
+    return `<div class="milestone">
+      <div class="milestone-dot" style="border-color:${m.cor};background:${ativo ? m.cor : 'transparent'};color:#000">
+        ${ativo ? '✓' : ''}
+      </div>
+      <div class="milestone-label" style="color:${m.cor}">${m.label}</div>
+      <div class="milestone-valor">${m.valor}</div>
+      <div class="milestone-data">${m.data}</div>
+    </div>`;
+  }).join('');
+
+  // Tabelas
+  document.getElementById('table-pagas').innerHTML =
+    tableHead() + '<tbody>' + pagas.map((p, i) => tableRow(p, i)).join('') + '</tbody>';
+  document.getElementById('table-pendentes').innerHTML =
+    tableHead() + '<tbody>' + pendentes.map((p, i) => tableRow(p, i)).join('') + '</tbody>';
+  document.getElementById('table-todas').innerHTML =
+    tableHead() + '<tbody id="tbody-todas">' + parcelas.map((p, i) => tableRow(p, i)).join('') + '</tbody>';
+
+  // Timestamp
+  const agora = new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  document.getElementById('last-updated').textContent = 'Atualizado em ' + agora;
+}
+
+// ─── BUSCA ───────────────────────────────────────────────────────────────────
+function filtrar() {
   const q = document.getElementById('busca').value.toLowerCase();
-  const filtered = PARCELAS.filter(p => p.nome.toLowerCase().includes(q));
-  document.getElementById('tbody-todas').innerHTML = filtered.map(tableRow).join('');
+  const filtered = TODAS_PARCELAS.filter(p => p.nome.toLowerCase().includes(q));
+  document.getElementById('tbody-todas').innerHTML = filtered.map((p, i) => tableRow(p, i)).join('');
 }
 
-// ─── TABS ─────────────────────────────────────────────────────────────────────
+// ─── TABS ────────────────────────────────────────────────────────────────────
+const VIEWS = ['visao', 'pagas', 'pendentes', 'todas'];
 function setTab(name) {
-  ['visao','pagas','pendentes','todas'].forEach(t => {
-    document.getElementById('view-' + t).classList.toggle('hidden', t !== name);
-  });
-  document.querySelectorAll('.tab').forEach((btn, i) => {
-    btn.classList.toggle('active', ['visao','pagas','pendentes','todas'][i] === name);
-  });
+  VIEWS.forEach(v => document.getElementById('view-' + v).classList.toggle('hidden', v !== name));
+  document.querySelectorAll('.tab').forEach((btn, i) => btn.classList.toggle('active', VIEWS[i] === name));
 }
 
-// Update tab labels
-document.getElementById('tab-pagas').textContent = 'Pagas (' + PAGAS.length + ')';
-document.getElementById('tab-pendentes').textContent = 'Pendentes (' + PENDENTES.length + ')';
+// ─── INIT ────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const pages = await carregarTodas();
+
+    if (!pages || pages.length === 0) throw new Error('Nenhuma parcela encontrada.');
+
+    // Extrair e ordenar por mês/ano
+    const parcelas = pages
+      .map(extrairDados)
+      .filter(p => p.nome)
+      .sort((a, b) => mesIndex(a.nome) - mesIndex(b.nome));
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render(parcelas);
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'flex';
+    document.getElementById('error-msg').textContent = err.message || 'Erro desconhecido.';
+  }
+}
+
+init();
 </script>
 </body>
 </html>
