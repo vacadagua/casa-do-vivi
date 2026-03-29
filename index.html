@@ -1,244 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Casa do Vivi · Pagamentos</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#0c0c10;--bg2:#13131a;--bg3:#1a1a24;--border:#22222e;--text:#e2ddd6;--muted:#5a5a72;--green:#5ecb8a;--blue:#7eb8f7;--red:#f07070;--gold:#f0c060}
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
-  #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px}
-  .spinner{width:36px;height:36px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-txt{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
-  #error{display:none;align-items:center;justify-content:center;min-height:100vh;flex-direction:column}
-  .err-box{background:var(--bg2);border:1px solid #3a1a1a;border-radius:10px;padding:32px 40px;text-align:center;max-width:420px}
-  .err-box h3{color:var(--red);margin-bottom:10px;font-family:'Playfair Display',serif;font-weight:400}
-  .err-box p{color:var(--muted);font-size:13px;line-height:1.7}
-  .err-box code{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);display:block;margin-top:12px;word-break:break-all}
-  #app{display:none}
-  .hdr{background:linear-gradient(160deg,#0e0e1a,#131325 60%,#0c1020);padding:52px 48px 44px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-  .hdr::before{content:'';position:absolute;top:-80px;right:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(126,184,247,.07),transparent 65%)}
-  .hdr-eye{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
-  .hdr h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;color:#dce8ff;line-height:1.1}
-  .hdr-sub{margin-top:10px;color:var(--muted);font-size:13px;font-weight:300}
-  .hdr-ts{position:absolute;top:24px;right:48px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
-  .cards{display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg2);border-bottom:1px solid var(--border)}
-  .card{padding:28px;border-right:1px solid var(--border);transition:background .2s}
-  .card:last-child{border-right:none}
-  .card:hover{background:var(--bg3)}
-  .c-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
-  .c-val{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
-  .c-sub{font-size:11px;color:var(--muted);margin-top:6px;font-weight:300}
-  .prog{background:var(--bg2);padding:20px 48px;border-bottom:1px solid var(--border)}
-  .prog-meta{display:flex;justify-content:space-between;margin-bottom:10px;font-family:'DM Mono',monospace;font-size:11px}
-  .prog-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-  .prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:2px;transition:width 1s ease}
-  .tabs{background:var(--bg);padding:0 48px;border-bottom:1px solid var(--border);display:flex;position:sticky;top:0;z-index:10}
-  .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:16px 22px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:color .2s,border-color .2s}
-  .tab:hover{color:var(--text)}
-  .tab.active{color:var(--blue);border-bottom-color:var(--blue)}
-  .content{padding:36px 48px}
-  .hidden{display:none!important}
-  .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px}
-  .p-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
-  .entry{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #16161f}
-  .entry:last-child{border-bottom:none}
-  .e-name{font-size:13px}
-  .e-sub{font-size:10px;color:var(--muted);margin-top:2px}
-  .e-r{text-align:right}
-  .e-pgto{font-family:'DM Mono',monospace;font-size:12px}
-  .e-saldo{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
-  .next-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(240,192,96,.3);padding:2px 6px;border-radius:3px;margin-right:8px;flex-shrink:0}
-  .milestones{grid-column:1/-1}
-  .ms-track{display:flex;align-items:flex-start;position:relative;margin-top:8px}
-  .ms-track::before{content:'';position:absolute;top:10px;left:10px;right:10px;height:1px;background:var(--border)}
-  .ms{flex:1;text-align:center;position:relative;z-index:1}
-  .ms-dot{width:20px;height:20px;border-radius:50%;border:2px solid;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:8px}
-  .ms-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
-  .ms-val{font-family:'DM Mono',monospace;font-size:11px}
-  .ms-data{font-size:10px;color:var(--muted);margin-top:2px}
-  .search{margin-bottom:16px}
-  .sinput{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace;width:280px;outline:none;transition:border-color .2s}
-  .sinput:focus{border-color:var(--blue)}
-  .sinput::placeholder{color:var(--muted)}
-  .tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;overflow-x:auto}
-  table{width:100%;border-collapse:collapse}
-  thead tr{background:var(--bg)}
-  th{padding:13px 18px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);font-weight:400;white-space:nowrap}
-  td{padding:11px 18px;border-bottom:1px solid #14141c}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:var(--bg3)}
-  .td-num{font-family:'DM Mono',monospace;color:#2e2e3e;font-size:11px}
-  .td-mono{font-family:'DM Mono',monospace;font-size:12px}
-  .badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 9px;border-radius:20px;text-transform:uppercase;white-space:nowrap}
-  .b-pago{background:rgba(94,203,138,.1);color:var(--green);border:1px solid rgba(94,203,138,.25)}
-  .b-pend{background:rgba(240,192,96,.08);color:var(--gold);border:1px solid rgba(240,192,96,.2)}
-  @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.ov-grid{grid-template-columns:1fr}.milestones{grid-column:1}.hdr,.prog,.content{padding-left:20px;padding-right:20px}.tabs{padding-left:20px}.hdr h1{font-size:26px}.hdr-ts{display:none}}
-</style>
-</head>
-<body>
+function doGet(e) {
+  var token  = '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';
+  var dbId   = '2c9057e4-f363-4570-b6a7-a75444e17ab7';
+  var url    = 'https://api.notion.com/v1/databases/' + dbId + '/query';
 
-<div id="loading">
-  <div class="spinner"></div>
-  <div class="loading-txt">Carregando dados do Notion...</div>
-</div>
-
-<div id="error">
-  <div class="err-box">
-    <h3>Erro ao carregar dados</h3>
-    <p id="err-msg">Não foi possível conectar ao Notion.</p>
-    <code id="err-detail"></code>
-  </div>
-</div>
-
-<div id="app">
-  <div class="hdr">
-    <div class="hdr-eye">Finanças · Casa do Vivi</div>
-    <h1>Acompanhamento<br>de Pagamentos</h1>
-    <div class="hdr-sub">Financiamento Ana &nbsp;·&nbsp; Janeiro 2025 → Maio 2035 &nbsp;·&nbsp; 125 parcelas</div>
-    <div class="hdr-ts" id="ts"></div>
-  </div>
-  <div class="cards">
-    <div class="card"><div class="c-label">Saldo Devedor</div><div class="c-val" id="c-saldo" style="color:var(--red)"></div><div class="c-sub">de R$&nbsp;50.000,00</div></div>
-    <div class="card"><div class="c-label">Total Pago</div><div class="c-val" id="c-pago" style="color:var(--green)"></div><div class="c-sub" id="c-pago-sub"></div></div>
-    <div class="card"><div class="c-label">Parcelas Restantes</div><div class="c-val" id="c-rest" style="color:var(--blue)"></div><div class="c-sub">de 125 total</div></div>
-    <div class="card"><div class="c-label">Próximo Vencimento</div><div class="c-val" id="c-prox" style="color:var(--gold);font-size:16px"></div><div class="c-sub" id="c-prox-sub"></div></div>
-  </div>
-  <div class="prog">
-    <div class="prog-meta">
-      <span style="color:var(--green)" id="m-pagas"></span>
-      <span style="color:var(--muted)" id="m-pct"></span>
-      <span style="color:var(--blue)" id="m-rest"></span>
-    </div>
-    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-  </div>
-  <div class="tabs">
-    <button class="tab active" onclick="setTab('visao')">Visão Geral</button>
-    <button class="tab" id="tab-p" onclick="setTab('pagas')">Pagas</button>
-    <button class="tab" id="tab-pe" onclick="setTab('pendentes')">Pendentes</button>
-    <button class="tab" onclick="setTab('todas')">Todas (125)</button>
-  </div>
-  <div class="content">
-    <div id="v-visao">
-      <div class="ov-grid">
-        <div class="panel"><div class="p-title">Últimas Pagas</div><div id="ul-pagas"></div></div>
-        <div class="panel"><div class="p-title">Próximas a Pagar</div><div id="prox-pagar"></div></div>
-        <div class="panel milestones"><div class="p-title">Marcos da Dívida</div><div class="ms-track" id="marcos"></div></div>
-      </div>
-    </div>
-    <div id="v-pagas" class="hidden"><div class="tbl-wrap"><table id="t-pagas"></table></div></div>
-    <div id="v-pendentes" class="hidden"><div class="tbl-wrap"><table id="t-pend"></table></div></div>
-    <div id="v-todas" class="hidden">
-      <div class="search"><input class="sinput" id="busca" placeholder="Buscar mês (ex: Março 2027)" oninput="filtrar()"></div>
-      <div class="tbl-wrap"><table id="t-todas"></table></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const PROXY='https://script.google.com/macros/s/AKfycbwbTHsQs1979-GRIo4SMizPGNjJNPjCeHa9rhWYPuU0Pm6Rj3KNhQZT6WKs8gMX6RbcRQ/exec';
-const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const brl=v=>(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-function mesIdx(n){if(!n)return 9999;const[m,a]=n.split(' ');return parseInt(a)*12+MESES.indexOf(m)}
-
-async function buscarTodas(){
-  let all=[],cursor=null;
-  do{
-    const body={page_size:100};
-    if(cursor)body.start_cursor=cursor;
-    const res=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    if(data.object==='error')throw new Error(data.message||'Erro Notion API');
-    all=all.concat(data.results||[]);
-    cursor=data.has_more?data.next_cursor:null;
-  }while(cursor);
-  return all;
-}
-
-function extrair(page){
-  const p=page.properties;
-  const vt=p['ValorTotal']?.number||0;
-  const pg=p['Pgto']?.number||400;
-  return{nome:p['Comprovantes']?.title?.[0]?.plain_text||'',status:p['Status do Pagamento']?.select?.name||'Pendente',valorTotal:vt,pgto:pg,saldoMes:vt-pg};
-}
-
-let TODAS=[];
-function tHead(){return'<thead><tr><th>#</th><th>Mês / Ano</th><th>Saldo Anterior</th><th>Pagamento</th><th>Saldo Após</th><th>Status</th></tr></thead>'}
-function tRow(p,i){
-  const badge=p.status==='Pago'?'<span class="badge b-pago">Pago</span>':'<span class="badge b-pend">Pendente</span>';
-  return`<tr><td class="td-num">${i+1}</td><td style="font-size:13px">${p.nome}</td><td class="td-mono" style="color:var(--muted)">${brl(p.valorTotal)}</td><td class="td-mono" style="color:var(--red)">- ${brl(p.pgto)}</td><td class="td-mono">${brl(p.saldoMes)}</td><td>${badge}</td></tr>`;
-}
-
-function render(parcelas){
-  TODAS=parcelas;
-  const pagas=parcelas.filter(p=>p.status==='Pago');
-  const pend=parcelas.filter(p=>p.status!=='Pago');
-  const ultima=pagas[pagas.length-1];
-  const prox=pend[0];
-  const saldo=ultima?ultima.saldoMes:50000;
-  const pct=(pagas.length/125*100).toFixed(1);
-
-  document.getElementById('c-saldo').textContent=brl(saldo);
-  document.getElementById('c-pago').textContent=brl(pagas.length*400);
-  document.getElementById('c-pago-sub').textContent=pagas.length+' parcelas pagas';
-  document.getElementById('c-rest').textContent=pend.length;
-  document.getElementById('c-prox').textContent=prox?prox.nome:'—';
-  document.getElementById('c-prox-sub').textContent=prox?'Parcela nº '+(pagas.length+1):'Dívida quitada!';
-  document.getElementById('m-pagas').textContent='✓ '+pagas.length+' pagas';
-  document.getElementById('m-pct').textContent=pct+'% concluído';
-  document.getElementById('m-rest').textContent=pend.length+' restantes →';
-  document.getElementById('prog-fill').style.width=pct+'%';
-  document.getElementById('tab-p').textContent='Pagas ('+pagas.length+')';
-  document.getElementById('tab-pe').textContent='Pendentes ('+pend.length+')';
-
-  document.getElementById('ul-pagas').innerHTML=pagas.slice(-5).reverse().map(p=>`<div class="entry"><div><div class="e-name">${p.nome}</div></div><div class="e-r"><div class="e-pgto" style="color:var(--green)">- ${brl(p.pgto)}</div><div class="e-saldo">saldo ${brl(p.saldoMes)}</div></div></div>`).join('');
-  document.getElementById('prox-pagar').innerHTML=pend.slice(0,6).map((p,i)=>`<div class="entry"><div style="display:flex;align-items:center">${i===0?'<span class="next-tag">PRÓX</span>':''}<div><div class="e-name" style="color:${i===0?'var(--gold)':'var(--text)'}">${p.nome}</div></div></div><div class="e-r"><div class="e-pgto" style="color:var(--muted)">- ${brl(p.pgto)}</div><div class="e-saldo">saldo ${brl(p.saldoMes)}</div></div></div>`).join('');
-
-  const pn=parseFloat(pct);
-  const marcos=[{l:'Início',v:brl(50000),d:'Jan/2025',p:0,c:'var(--muted)'},{l:'25% pago',v:brl(37500),d:'Mar/2028',p:25,c:'var(--blue)'},{l:'50% pago',v:brl(25000),d:'Jun/2031',p:50,c:'var(--blue)'},{l:'75% pago',v:brl(12500),d:'Ago/2034',p:75,c:'var(--blue)'},{l:'Quitação',v:brl(0),d:'Mai/2035',p:100,c:'var(--green)'}];
-  document.getElementById('marcos').innerHTML=marcos.map(m=>{const ok=pn>=m.p;return`<div class="ms"><div class="ms-dot" style="border-color:${m.c};background:${ok?m.c:'transparent'};color:#000">${ok?'✓':''}</div><div class="ms-label" style="color:${m.c}">${m.l}</div><div class="ms-val">${m.v}</div><div class="ms-data">${m.d}</div></div>`;}).join('');
-
-  document.getElementById('t-pagas').innerHTML=tHead()+'<tbody>'+pagas.map(tRow).join('')+'</tbody>';
-  document.getElementById('t-pend').innerHTML=tHead()+'<tbody>'+pend.map(tRow).join('')+'</tbody>';
-  document.getElementById('t-todas').innerHTML=tHead()+'<tbody id="tb-todas">'+parcelas.map(tRow).join('')+'</tbody>';
-
-  const ts=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-  document.getElementById('ts').textContent='Atualizado '+ts;
-}
-
-function filtrar(){
-  const q=document.getElementById('busca').value.toLowerCase();
-  document.getElementById('tb-todas').innerHTML=TODAS.filter(p=>p.nome.toLowerCase().includes(q)).map(tRow).join('');
-}
-
-const VIEWS=['visao','pagas','pendentes','todas'];
-function setTab(name){
-  VIEWS.forEach(v=>document.getElementById('v-'+v).classList.toggle('hidden',v!==name));
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',VIEWS[i]===name));
-}
-
-async function init(){
-  try{
-    const pages=await buscarTodas();
-    if(!pages.length)throw new Error('Nenhuma parcela encontrada.');
-    const parcelas=pages.map(extrair).filter(p=>p.nome).sort((a,b)=>mesIdx(a.nome)-mesIdx(b.nome));
-    document.getElementById('loading').style.display='none';
-    document.getElementById('app').style.display='block';
-    render(parcelas);
-  }catch(err){
-    console.error(err);
-    document.getElementById('loading').style.display='none';
-    document.getElementById('error').style.display='flex';
-    document.getElementById('err-msg').textContent='Não foi possível carregar os dados do Notion.';
-    document.getElementById('err-detail').textContent=err.message;
+  var body = { page_size: 100 };
+  if (e && e.parameter && e.parameter.cursor) {
+    body.start_cursor = e.parameter.cursor;
   }
+
+  var options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Notion-Version': '2022-06-28'
+    },
+    payload: JSON.stringify(body),
+    muteHttpExceptions: true
+  };
+
+  var response = UrlFetchApp.fetch(url, options);
+
+  return ContentService
+    .createTextOutput(response.getContentText())
+    .setMimeType(ContentService.MimeType.JSON);
 }
-init();
-</script>
-</body>
-</html>
